@@ -3,6 +3,7 @@
 
 <template>
   <el-button type="primary">Primary</el-button>
+  测试邮箱
 </template>
 
 <style scoped>
