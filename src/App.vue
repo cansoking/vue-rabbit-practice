@@ -1,9 +1,9 @@
 <script setup>
+import { RouterView } from "vue-router";
 </script>
 
 <template>
-  <el-button type="primary">Primary</el-button>
-  测试邮箱
+  <RouterView />
 </template>
 
 <style scoped>
