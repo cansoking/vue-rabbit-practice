@@ -4,6 +4,7 @@ import { getHomeBannerAPI } from "@/apis/home";
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import GoodsItem from "@/views/Home/components/GoodsItem.vue";
+import { onBeforeRouteUpdate } from "vue-router";
 
 // 获取分类信息
 const categoryData = ref({});
@@ -16,6 +17,11 @@ const getCategory = async (id) => {
 
 onMounted(() => {
   getCategory(route.params.id);
+});
+
+// 随路由变化刷新内容
+onBeforeRouteUpdate((to) => {
+  getCategory(to.params.id);
 });
 
 // 获取Banner轮播图
@@ -47,7 +53,7 @@ onMounted(() => {
       <div class="home-banner">
         <el-carousel height="500px">
           <el-carousel-item v-for="item in bannerList" :key="item.id">
-            <img :src="item.imgUrl" alt="" />
+            <img v-img-lazy="item.imgUrl" alt="" />
           </el-carousel-item>
         </el-carousel>
       </div>
@@ -57,7 +63,7 @@ onMounted(() => {
         <ul>
           <li v-for="i in categoryData.children" :key="i.id">
             <RouterLink to="/">
-              <img :src="i.picture" />
+              <img v-img-lazy="i.picture" />
               <p>{{ i.name }}</p>
             </RouterLink>
           </li>
