@@ -1,8 +1,10 @@
 <script setup>
 import { getTopCategoryAPI } from "@/apis/category";
+import { getHomeBannerAPI } from "@/apis/home";
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
 
+// 获取分类信息
 const categoryData = ref({});
 const route = useRoute();
 
@@ -13,6 +15,20 @@ const getCategory = async (id) => {
 
 onMounted(() => {
   getCategory(route.params.id);
+});
+
+// 获取Banner轮播图
+const bannerList = ref([]);
+
+const getBannerList = async () => {
+  const res = await getHomeBannerAPI({
+    distributionSite: "2",
+  });
+  bannerList.value = res.result;
+};
+
+onMounted(() => {
+  getBannerList();
 });
 </script>
 
@@ -25,6 +41,14 @@ onMounted(() => {
           <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
           <el-breadcrumb-item>{{ categoryData.name }}</el-breadcrumb-item>
         </el-breadcrumb>
+      </div>
+      <!-- Banner -->
+      <div class="home-banner">
+        <el-carousel height="500px">
+          <el-carousel-item v-for="item in bannerList" :key="item.id">
+            <img :src="item.imgUrl" alt="" />
+          </el-carousel-item>
+        </el-carousel>
       </div>
     </div>
   </div>
@@ -106,6 +130,16 @@ onMounted(() => {
 
   .bread-container {
     padding: 25px 0;
+  }
+}
+.home-banner {
+  width: 1240px;
+  height: 500px;
+  margin: 0 auto;
+
+  img {
+    width: 100%;
+    height: 500px;
   }
 }
 </style>
