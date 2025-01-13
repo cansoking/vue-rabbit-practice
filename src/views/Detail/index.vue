@@ -2,16 +2,23 @@
 import { getDetails } from "@/apis/details";
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
+import DetailHot from "./components/DetailHot.vue";
+import { onBeforeRouteUpdate } from "vue-router";
 
 const goods = ref({});
 const route = useRoute();
-const getGoods = async () => {
-  const res = await getDetails(route.params.id);
+const getGoods = async (goodId = route.params.id) => {
+  const res = await getDetails(goodId);
   goods.value = res.result;
 };
 
 onMounted(() => {
   getGoods();
+});
+
+// 路由缓存优化，随路由变化刷新内容
+onBeforeRouteUpdate((to) => {
+  getGoods(to.params.id);
 });
 </script>
 
@@ -127,7 +134,10 @@ onMounted(() => {
               </div>
             </div>
             <!-- 24热榜+专题推荐 -->
-            <div class="goods-aside"></div>
+            <div class="goods-aside">
+              <DetailHot :hot-type="1" />
+              <DetailHot :hot-type="2" />
+            </div>
           </div>
         </div>
       </div>
