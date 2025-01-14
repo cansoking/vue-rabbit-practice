@@ -10,6 +10,7 @@ defineProps({
   },
 });
 
+
 // 图片预览
 const curActive = ref(0);
 const onMouseEnterHandler = (i) => {
