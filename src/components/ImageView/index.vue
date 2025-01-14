@@ -1,5 +1,6 @@
 <script setup>
-import { ref } from "vue";
+import { computed, ref, watch } from "vue";
+import { useMouseInElement } from "@vueuse/core";
 
 // 图片列表
 const imageList = [
@@ -15,16 +16,33 @@ const curActive = ref(0);
 const onMouseEnterHandler = (i) => {
   curActive.value = i;
 };
+
+// 放大镜
+const target = ref(null);
+const { elementX, elementY, isOutside } = useMouseInElement(target);
+
+// 放大镜滑块跟随鼠标移动
+const left = computed(() => {
+  if (elementX.value <= 100) return 0;
+  if (elementX.value >= 300) return 200;
+  return elementX.value - 100;
+});
+const top = computed(() => {
+  if (elementY.value <= 100) return 0;
+  if (elementY.value >= 300) return 200;
+  return elementY.value - 100;
+});
 </script>
 
 
 <template>
+  {{ { elementX, elementY, isOutside, left, top } }}
   <div class="goods-image">
     <!-- 左侧大图-->
     <div class="middle" ref="target">
       <img :src="imageList[curActive]" alt="" />
       <!-- 蒙层小滑块 -->
-      <div class="layer" :style="{ left: `0px`, top: `0px` }"></div>
+      <div class="layer" :style="{ left: `${left}px`, top: `${top}px` }"></div>
     </div>
     <!-- 小图列表 -->
     <ul class="small">
