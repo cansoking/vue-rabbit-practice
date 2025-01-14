@@ -32,17 +32,27 @@ const top = computed(() => {
   if (elementY.value >= 300) return 200;
   return elementY.value - 100;
 });
+// 放大效果实现
+const backgroundPositionX = computed(() => {
+  return -left.value * 2;
+});
+const backgroundPositionY = computed(() => {
+  return -top.value * 2;
+});
 </script>
 
 
 <template>
-  {{ { elementX, elementY, isOutside, left, top } }}
   <div class="goods-image">
     <!-- 左侧大图-->
     <div class="middle" ref="target">
       <img :src="imageList[curActive]" alt="" />
       <!-- 蒙层小滑块 -->
-      <div class="layer" :style="{ left: `${left}px`, top: `${top}px` }"></div>
+      <div
+        v-show="!isOutside"
+        class="layer"
+        :style="{ left: `${left}px`, top: `${top}px` }"
+      ></div>
     </div>
     <!-- 小图列表 -->
     <ul class="small">
@@ -60,12 +70,12 @@ const top = computed(() => {
       class="large"
       :style="[
         {
-          backgroundImage: `url(${imageList[0]})`,
-          backgroundPositionX: `0px`,
-          backgroundPositionY: `0px`,
+          backgroundImage: `url(${imageList[curActive]})`,
+          backgroundPositionX: `${backgroundPositionX}px`,
+          backgroundPositionY: `${backgroundPositionY}px`,
         },
       ]"
-      v-show="false"
+      v-show="!isOutside"
     ></div>
   </div>
 </template>
