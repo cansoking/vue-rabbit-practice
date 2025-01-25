@@ -11,9 +11,14 @@ import { lazyPlugin } from "@/directives";
 // 组件注册全局组件插件
 import { componentsPlugin } from "@/components/index";
 
+import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
+
 const app = createApp(App);
 
-app.use(createPinia());
+// 注册piniapersist插件
+const pinia = createPinia();
+pinia.use(piniaPluginPersistedstate);
+app.use(pinia);
 app.use(router);
 app.use(lazyPlugin);
 app.use(componentsPlugin);

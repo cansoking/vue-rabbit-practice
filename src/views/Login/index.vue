@@ -3,12 +3,14 @@ import { ref } from "vue";
 import { ElMessage } from "element-plus";
 import "element-plus/theme-chalk/el-message.css";
 import { useRouter } from "vue-router";
-import { loginAPI } from "@/apis/user";
+import { useUserStore } from "@/stores/user";
+
+const userStore = useUserStore();
 
 const form = ref({
-  account: "",
-  password: "",
-  agree: false,
+  account: "heima282",
+  password: "hm#qd@23!",
+  agree: true,
 });
 
 const rules = ref({
@@ -38,7 +40,7 @@ const doLogin = () => {
     if (valid) {
       // TODO: 登录逻辑
       console.log("校验成功");
-      await loginAPI({
+      await userStore.getUserInfo({
         account: form.value.account,
         password: form.value.password,
       });
