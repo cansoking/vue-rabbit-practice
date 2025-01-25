@@ -16,9 +16,19 @@ export const useCartStore = defineStore(
         cartList.value.push(goods);
       }
     };
+
+    const delCart = (id) => {
+      // 删除购物车逻辑
+      const index = cartList.value.findIndex((item) => item.skuId === id);
+      if (index !== -1) {
+        cartList.value.splice(index, 1);
+      }
+    };
+
     return {
       cartList,
       addCart,
+      delCart,
     };
   },
   {
