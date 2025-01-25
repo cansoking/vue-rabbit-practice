@@ -3,6 +3,7 @@ import axios from "axios";
 import { ElMessage } from "element-plus";
 import "element-plus/theme-chalk/el-message.css";
 import { useUserStore } from "@/stores/user";
+import router from "@/router";
 
 const httpInstance = axios.create({
   baseURL: "http://pcapi-xiaotuxian-front-devtest.itheima.net/",
@@ -33,6 +34,12 @@ httpInstance.interceptors.response.use(
   (e) => {
     // 拦截错误响应
     ElMessage.error(e.response.data.message);
+    // token过期，401代码处理
+    if (e.response.status === 401) {
+      const userStore = useUserStore();
+      userStore.clearUserInfo();
+      router.push("/login");
+    }
     return Promise.reject(e);
   }
 );
