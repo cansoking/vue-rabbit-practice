@@ -1,5 +1,9 @@
 <script setup>
 import { ref } from "vue";
+import { ElMessage } from "element-plus";
+import "element-plus/theme-chalk/el-message.css";
+import { useRouter } from "vue-router";
+import { loginAPI } from "@/apis/user";
 
 const form = ref({
   account: "",
@@ -27,12 +31,20 @@ const rules = ref({
 });
 
 // 统一校验
+const router = useRouter();
 const formRef = ref(null);
 const doLogin = () => {
-  formRef.value.validate((valid) => {
+  formRef.value.validate(async (valid) => {
     if (valid) {
       // TODO: 登录逻辑
       console.log("校验成功");
+      await loginAPI({
+        account: form.value.account,
+        password: form.value.password,
+      });
+      // 正常返回登陆成功，跳转到首页，登陆失败由拦截器处理
+      ElMessage.success("登录成功");
+      router.replace("/");
     } else {
       console.log("校验失败");
       return false;
@@ -75,7 +87,7 @@ const doLogin = () => {
                 <el-input v-model="form.account" />
               </el-form-item>
               <el-form-item prop="password" label="密码">
-                <el-input v-model="form.password" />
+                <el-input type="password" v-model="form.password" />
               </el-form-item>
               <el-form-item prop="agree" label-width="22px">
                 <el-checkbox v-model="form.agree" size="large">
