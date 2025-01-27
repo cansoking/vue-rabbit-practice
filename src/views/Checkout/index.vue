@@ -1,6 +1,11 @@
 <script setup>
 import { onMounted, ref } from "vue";
-import { getCheckoutInfoAPI } from "@/apis/checkout";
+import { getCheckoutInfoAPI, createOrderAPI } from "@/apis/checkout";
+import { useRouter } from "vue-router";
+import { useCartStore } from "@/stores/cart";
+
+const router = useRouter();
+const cartStore = useCartStore();
 
 const checkInfo = ref({}); // 订单对象
 const curAddress = ref({}); // 地址对象
@@ -30,6 +35,34 @@ const changeAddress = () => {
 const closeDialog = () => {
   toggleFlag.value = false;
   activeAddress.value = {};
+};
+
+// 提交订单
+const createOrder = async () => {
+  // 生成订单id
+  const res = await createOrderAPI({
+    deliveryTimeType: 1,
+    payType: 1,
+    payChannel: 1,
+    buyerMessage: "",
+    goods: checkInfo.value.goods.map((item) => {
+      return {
+        skuId: item.skuId,
+        count: item.count,
+      };
+    }),
+    addressId: curAddress.value.id,
+  });
+  const orderId = res.result.id;
+  // 更新购物车
+  cartStore.updateNewCartList();
+  // 跳转到支付页面
+  router.push({
+    path: "/pay",
+    query: {
+      id: orderId,
+    },
+  });
 };
 </script>
 
@@ -140,7 +173,9 @@ const closeDialog = () => {
         </div>
         <!-- 提交订单 -->
         <div class="submit">
-          <el-button type="primary" size="large">提交订单</el-button>
+          <el-button type="primary" size="large" @click="createOrder"
+            >提交订单</el-button
+          >
         </div>
       </div>
     </div>
