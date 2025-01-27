@@ -1,19 +1,31 @@
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
+import { insertCartAPI, getNewCartListAPI } from "@/apis/cart";
+import { useUserStore } from "./user";
 
 export const useCartStore = defineStore(
   "cart",
   () => {
     // state
     const cartList = ref([]);
+    const userStore = useUserStore();
+    const isLogin = computed(() => userStore.userInfo.token);
     // actions
-    const addCart = (goods) => {
+    const addCart = async (goods) => {
       // 添加购物车逻辑
-      const item = cartList.value.find((item) => item.skuId === goods.skuId);
-      if (item) {
-        item.count += goods.count;
+      if (isLogin.value) {
+        // 接口购物车逻辑
+        await insertCartAPI({ skuId: goods.skuId, count: goods.count });
+        // 更新购物车数据
+        updateNewCartList();
       } else {
-        cartList.value.push(goods);
+        // 本地购物车逻辑
+        const item = cartList.value.find((item) => item.skuId === goods.skuId);
+        if (item) {
+          item.count += goods.count;
+        } else {
+          cartList.value.push(goods);
+        }
       }
     };
 
@@ -36,6 +48,11 @@ export const useCartStore = defineStore(
       cartList.value.forEach((item) => {
         item.selected = selected;
       });
+    };
+
+    const updateNewCartList = async () => {
+      const res = await getNewCartListAPI();
+      cartList.value = res.result;
     };
 
     // computed
@@ -70,6 +87,7 @@ export const useCartStore = defineStore(
       allCheck,
       addCart,
       delCart,
+      updateNewCartList,
     };
   },
   {
