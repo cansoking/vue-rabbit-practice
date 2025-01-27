@@ -19,6 +19,7 @@ export const useUserStore = defineStore(
 
     const clearUserInfo = () => {
       userInfo.value = {};
+      cartStore.clearCart();
     };
 
     return { userInfo, getUserInfo, clearUserInfo };

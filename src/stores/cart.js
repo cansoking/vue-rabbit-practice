@@ -62,6 +62,10 @@ export const useCartStore = defineStore(
       cartList.value = res.result;
     };
 
+    const clearCart = () => {
+      cartList.value = [];
+    };
+
     // computed
     const totalCount = computed(() =>
       cartList.value.reduce((t, c) => t + c.count, 0)
@@ -95,6 +99,7 @@ export const useCartStore = defineStore(
       addCart,
       delCart,
       updateNewCartList,
+      clearCart,
     };
   },
   {
