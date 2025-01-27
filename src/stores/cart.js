@@ -32,12 +32,21 @@ export const useCartStore = defineStore(
       }
     };
 
+    const allCheck = (selected) => {
+      cartList.value.forEach((item) => {
+        item.selected = selected;
+      });
+    };
+
     // computed
     const totalCount = computed(() =>
       cartList.value.reduce((t, c) => t + c.count, 0)
     );
     const totalPrice = computed(() =>
       cartList.value.reduce((t, c) => t + c.count * c.price, 0)
+    );
+    const allChecked = computed(() =>
+      cartList.value.every((item) => item.selected)
     );
 
     return {
@@ -47,6 +56,8 @@ export const useCartStore = defineStore(
       totalCount,
       totalPrice,
       singleCheck,
+      allCheck,
+      allChecked,
     };
   },
   {
