@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
-import { insertCartAPI, getNewCartListAPI } from "@/apis/cart";
+import { insertCartAPI, getNewCartListAPI, delCartAPI } from "@/apis/cart";
 import { useUserStore } from "./user";
 
 export const useCartStore = defineStore(
@@ -29,11 +29,18 @@ export const useCartStore = defineStore(
       }
     };
 
-    const delCart = (id) => {
+    const delCart = async (id) => {
       // 删除购物车逻辑
-      const index = cartList.value.findIndex((item) => item.skuId === id);
-      if (index !== -1) {
-        cartList.value.splice(index, 1);
+      if (isLogin.value) {
+        // 接口购物车逻辑
+        await delCartAPI([id]);
+        // 更新购物车数据
+        updateNewCartList();
+      } else {
+        const index = cartList.value.findIndex((item) => item.skuId === id);
+        if (index !== -1) {
+          cartList.value.splice(index, 1);
+        }
       }
     };
 
